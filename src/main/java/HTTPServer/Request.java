@@ -11,4 +11,16 @@ public class Request {
     this.requestURI = requestURI;
     this.version = version;
   }
+
+  public Method getMethod() {
+    return method;
+  }
+
+  public String getRequestURI() {
+    return requestURI;
+  }
+
+  public Version getVersion() {
+    return version;
+  }
 }

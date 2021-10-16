@@ -30,7 +30,8 @@ public final class RequestLineReader {
     int read = isr.read();
 
     while (read != SPACE_ASCII_VAL) {
-      if (read == -1 || sb.length() >= Method.MAX_LENGTH) {
+      throwIfInvalidRead(read);
+      if (sb.length() >= Method.MAX_LENGTH) {
         throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
       }
       sb.append((char) read);
@@ -38,7 +39,7 @@ public final class RequestLineReader {
     }
     Method method = Method.getExact(sb.toString());
     if (method == null) {
-      throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
+      throw new RequestException(ResponseCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
     }
     return method;
   }
@@ -47,9 +48,7 @@ public final class RequestLineReader {
     StringBuilder sb = new StringBuilder();
     int read = isr.read();
     while (read != SPACE_ASCII_VAL) {
-      if (read == -1) {
-        throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
-      }
+      throwIfInvalidRead(read);
       if (sb.length() >= MAX_URI_LENGTH) {
         throw new RequestException(ResponseCode.CLIENT_ERROR_414_URI_TOO_LONG);
       }
@@ -65,16 +64,29 @@ public final class RequestLineReader {
 
     for (int i = 0; i < VERSION_LENGTH; i++) {
       read = isr.read();
-      if (read == -1) {
-        throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
-      }
+      throwIfInvalidRead(read);
       sb.append((char) read);
     }
-    Version result = Version.getExact(sb.toString());
-    if (result == null) {
+    throwIfVersionFormatIncorrect(sb.toString());
+    int majorVer = Integer.parseInt(sb.substring(5,6));
+    int minorVer = Integer.parseInt(sb.substring(7,8));
+    Version version = Version.getExact(majorVer, minorVer);
+    if (version == null) {
+      throw new RequestException(ResponseCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
+    }
+    return version;
+  }
+
+  private static void throwIfVersionFormatIncorrect(String versionText) throws RequestException {
+    if (!versionText.matches("HTTP/\\d\\.\\d")){
       throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
-    return result;
+  }
+
+  private static void throwIfInvalidRead(int read) throws RequestException {
+    if (read == -1 || read == '\r' || read == '\n') {
+      throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
+    }
   }
 
   private static void readLineEnd(InputStreamReader isr) throws RequestException, IOException {
