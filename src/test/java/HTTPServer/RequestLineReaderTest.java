@@ -14,7 +14,7 @@ public class RequestLineReaderTest {
     String requestText = "GET " + uri + " HTTP/1.1\r\n";
 
     try (InputStream is = new ByteArrayInputStream(requestText.getBytes())) {
-      Request request = RequestLineReader.readRequestLine(is);
+      RequestLine request = RequestLineReader.readRequestLine(is);
       Assert.assertEquals(request.getMethod(), Method.GET);
       Assert.assertEquals(request.getRequestURI(), uri);
       Assert.assertEquals(request.getVersion(), Version.HTTP_1_1);
@@ -151,14 +151,14 @@ public class RequestLineReaderTest {
     return "GET uriGibberishHere HTTP/1.1\r\n";
   }
 
-  private void assertRequestExceptionThrown(String requestText, ResponseCode code) {
+  private void assertRequestExceptionThrown(String requestText, ResponseCode expected) {
     try (InputStream is = new ByteArrayInputStream(requestText.getBytes())) {
-      Request request = RequestLineReader.readRequestLine(is);
+      RequestLine request = RequestLineReader.readRequestLine(is);
       Assert.fail();
     } catch (IOException e) {
       Assert.fail();
     } catch (RequestException e) {
-      Assert.assertEquals(code, e.getResponseCode());
+      Assert.assertEquals(expected, e.getResponseCode());
     }
   }
 }

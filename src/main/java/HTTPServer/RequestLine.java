@@ -1,12 +1,12 @@
 package HTTPServer;
 
-public class Request {
+public class RequestLine {
 
-  private Method method;
-  private String requestURI;
-  private Version version;
+  private final Method method;
+  private final String requestURI;
+  private final Version version;
 
-  public Request(Method method, String requestURI, Version version) {
+  public RequestLine(Method method, String requestURI, Version version) {
     this.method = method;
     this.requestURI = requestURI;
     this.version = version;

@@ -19,4 +19,12 @@ public enum Version {
     }
     return null;
   }
+
+  public int getMajorVer() {
+    return majorVer;
+  }
+
+  public int getMinorVer() {
+    return minorVer;
+  }
 }

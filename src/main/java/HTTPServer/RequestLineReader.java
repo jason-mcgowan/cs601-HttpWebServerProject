@@ -15,13 +15,13 @@ public final class RequestLineReader {
   private RequestLineReader() {
   }
 
-  public static Request readRequestLine(InputStream is) throws IOException, RequestException {
+  public static RequestLine readRequestLine(InputStream is) throws IOException, RequestException {
     try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
       Method method = readMethod(isr);
       String uri = readURI(isr);
       Version version = readVersion(isr);
       readLineEnd(isr);
-      return new Request(method, uri, version);
+      return new RequestLine(method, uri, version);
     }
   }
 
