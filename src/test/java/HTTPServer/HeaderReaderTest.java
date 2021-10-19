@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,10 +103,10 @@ public class HeaderReaderTest {
     } catch (IOException e) {
       Assert.fail();
     }
-    Assert.assertTrue(headers.containsKey(goodField1));
-    Assert.assertTrue(headers.containsKey(goodField2));
-    Assert.assertEquals(goodValue1, headers.get(goodField1));
-    Assert.assertEquals(goodValue2, headers.get(goodField2));
+    Assert.assertTrue(headers.containsKey(goodField1.toLowerCase()));
+    Assert.assertTrue(headers.containsKey(goodField2.toLowerCase()));
+    Assert.assertEquals(goodValue1, headers.get(goodField1.toLowerCase()));
+    Assert.assertEquals(goodValue2, headers.get(goodField2.toLowerCase()));
     Assert.assertEquals(2, headers.size());
   }
 

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class HeaderReader {
 
@@ -16,11 +17,14 @@ public class HeaderReader {
   private StringBuilder current = new StringBuilder();
   private String currentField;
 
+  private HeaderReader() {
+  }
+
   public static HashMap<String, String> readHeaderLines(InputStream is) throws IOException {
     HeaderReader hb = new HeaderReader();
     boolean moreToRead = true;
     int read;
-    try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)){
+    try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
       while (moreToRead) {
         read = isr.read();
         if (read == -1) {
@@ -34,6 +38,12 @@ public class HeaderReader {
 
   private boolean addChar(char c) throws IOException {
     return state.addChar(c, this);
+  }
+
+  private void addLineToHeaders() {
+    headers.merge(currentField.toLowerCase(), current.toString(), (o, n) -> o + "," + n);
+    currentField = "";
+    current = new StringBuilder();
   }
 
   // region State Inner Classes
@@ -101,9 +111,7 @@ public class HeaderReader {
         if (hb.current.isEmpty()) {  // Problem if you're ending the line without any terms
           throw new IOException();
         }
-        hb.headers.put(hb.currentField, hb.current.toString());
-        hb.currentField = "";
-        hb.current = new StringBuilder();
+        hb.addLineToHeaders();
         hb.state = new InLineTerm();
         return true;
       }
