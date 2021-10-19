@@ -18,31 +18,25 @@ public class HeaderReader {
 
   public static HashMap<String, String> readHeaderLines(InputStream is) throws IOException {
     HeaderReader hb = new HeaderReader();
-    boolean keepReading = true;
+    boolean moreToRead = true;
     int read;
     try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)){
-      while (keepReading) {
+      while (moreToRead) {
         read = isr.read();
         if (read == -1) {
           throw new IOException();
         }
-        keepReading = hb.continueReading((char) read);
+        moreToRead = hb.addChar((char) read);
       }
     }
     return hb.headers;
   }
 
-  /**
-   * Adds in a character for parsing an HTTP header section. Returns true when more characters are
-   * expected. Strips optional white space between field and value.
-   *
-   * @return True when more characters are expected.
-   * @throws IOException If the character violates protocol (space in field or invalid termination)
-   */
-  private boolean continueReading(char c) throws IOException {
+  private boolean addChar(char c) throws IOException {
     return state.addChar(c, this);
   }
 
+  // region State Inner Classes
   private interface State {
 
     boolean addChar(char c, HeaderReader hb) throws IOException;
@@ -141,4 +135,5 @@ public class HeaderReader {
       return false;
     }
   }
+  // endregion
 }
