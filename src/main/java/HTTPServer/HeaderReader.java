@@ -1,11 +1,8 @@
 package HTTPServer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Locale;
 
 public class HeaderReader {
 
@@ -20,18 +17,16 @@ public class HeaderReader {
   private HeaderReader() {
   }
 
-  public static HashMap<String, String> readHeaderLines(InputStream is) throws IOException {
+  public static HashMap<String, String> readHeaderLines(InputStreamReader isr) throws IOException {
     HeaderReader hb = new HeaderReader();
     boolean moreToRead = true;
     int read;
-    try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
-      while (moreToRead) {
-        read = isr.read();
-        if (read == -1) {
-          throw new IOException();
-        }
-        moreToRead = hb.addChar((char) read);
+    while (moreToRead) {
+      read = isr.read();
+      if (read == -1) {
+        throw new IOException();
       }
+      moreToRead = hb.addChar((char) read);
     }
     return hb.headers;
   }
@@ -103,7 +98,7 @@ public class HeaderReader {
       if (hb.current.isEmpty() && c == ' ') {
         return true;
       }
-      if (c == ':' || c == LF) {
+      if (c == LF) {
         throw new IOException();
       }
       // CR indicates the first term of the end of line expression

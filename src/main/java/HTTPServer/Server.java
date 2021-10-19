@@ -1,11 +1,10 @@
 package HTTPServer;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,28 +52,16 @@ public class Server {
     }
   }
 
-  private void handleConnection(Socket client) {
+  private synchronized void handleConnection(Socket client) {
     handlerLock.readLock().lock();
-    try {
-      // todo get and handle request
+    try (InputStreamReader isr = new InputStreamReader(client.getInputStream(),
+        StandardCharsets.US_ASCII)) {
+      Request request = RequestReader.readRequest(isr);
       // todo send response, close socket
-      client.getOutputStream()
-          .write(
-              ("HTTP/1.1 200 OK\r\n"
-                  + "Date: " + Instant.now() + "\r\n"
-                  + "Content-type: text/html;charset=us-ascii\r\n"
-                  + "Content-length: 2\r\n"
-                  + "Connection: close\r\n\r\n"
-                  + "Hi\r\n\r\n").getBytes(
-                  StandardCharsets.US_ASCII));
-      System.out.println("Response sent");
-    } catch (IOException e) {
-      e.printStackTrace();
-//    } catch (RequestException e) {
-//      System.out.println("Response code: " + e.getResponseCode());
+    } catch (IOException | RequestException e) {
+      // todo send response to client
     } finally {
       handlerLock.readLock().unlock();
     }
   }
-
 }

@@ -3,6 +3,8 @@ package HTTPServer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,8 +15,9 @@ public class RequestLineReaderTest {
     String uri = "l;kjwopiurqmz/.nas;l";
     String requestText = "GET " + uri + " HTTP/1.1\r\n";
 
-    try (InputStream is = new ByteArrayInputStream(requestText.getBytes())) {
-      RequestLine request = RequestLineReader.readRequestLine(is);
+    try (InputStream is = new ByteArrayInputStream(requestText.getBytes());
+        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
+      RequestLine request = RequestLineReader.readRequestLine(isr);
       Assert.assertEquals(request.getMethod(), Method.GET);
       Assert.assertEquals(request.getRequestURI(), uri);
       Assert.assertEquals(request.getVersion(), Version.HTTP_1_1);
@@ -152,8 +155,9 @@ public class RequestLineReaderTest {
   }
 
   private void assertRequestExceptionThrown(String requestText, ResponseCode expected) {
-    try (InputStream is = new ByteArrayInputStream(requestText.getBytes())) {
-      RequestLine request = RequestLineReader.readRequestLine(is);
+    try (InputStream is = new ByteArrayInputStream(requestText.getBytes());
+        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
+      RequestLine request = RequestLineReader.readRequestLine(isr);
       Assert.fail();
     } catch (IOException e) {
       Assert.fail();

@@ -2,10 +2,9 @@ package HTTPServer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Locale;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,13 +83,6 @@ public class HeaderReaderTest {
   }
 
   @Test(expected = IOException.class)
-  public void COLON_IN_VALUE_THROWS_IOEXCEPTION() throws IOException {
-    String header = goodField1 + ": this : isn't allowed" + CRLF
-        + CRLF;
-    assertReadingThrowsIOException(header);
-  }
-
-  @Test(expected = IOException.class)
   public void BAD_LINE_TERM_PATTERN_THROWS_IOEXCEPTION() throws IOException {
     String header = goodField1 + ":" + goodValue1 + "\r \n"
         + CRLF;
@@ -115,8 +107,9 @@ public class HeaderReaderTest {
     Assert.fail();
   }
 
-  private InputStream getInputStream(String text) {
-    return new ByteArrayInputStream(text.getBytes(StandardCharsets.US_ASCII));
+  private InputStreamReader getInputStream(String text) {
+    return new InputStreamReader(
+        new ByteArrayInputStream(text.getBytes(StandardCharsets.US_ASCII)));
   }
 
 }

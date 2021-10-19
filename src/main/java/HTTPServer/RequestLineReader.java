@@ -15,14 +15,12 @@ public final class RequestLineReader {
   private RequestLineReader() {
   }
 
-  public static RequestLine readRequestLine(InputStream is) throws IOException, RequestException {
-    try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
-      Method method = readMethod(isr);
-      String uri = readURI(isr);
-      Version version = readVersion(isr);
-      readLineEnd(isr);
-      return new RequestLine(method, uri, version);
-    }
+  public static RequestLine readRequestLine(InputStreamReader isr) throws IOException, RequestException {
+    Method method = readMethod(isr);
+    String uri = readURI(isr);
+    Version version = readVersion(isr);
+    readLineEnd(isr);
+    return new RequestLine(method, uri, version);
   }
 
   private static Method readMethod(InputStreamReader isr) throws IOException, RequestException {
@@ -68,8 +66,8 @@ public final class RequestLineReader {
       sb.append((char) read);
     }
     throwIfVersionFormatIncorrect(sb.toString());
-    int majorVer = Integer.parseInt(sb.substring(5,6));
-    int minorVer = Integer.parseInt(sb.substring(7,8));
+    int majorVer = Integer.parseInt(sb.substring(5, 6));
+    int minorVer = Integer.parseInt(sb.substring(7, 8));
     Version version = Version.getExact(majorVer, minorVer);
     if (version == null) {
       throw new RequestException(ResponseCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
@@ -78,7 +76,7 @@ public final class RequestLineReader {
   }
 
   private static void throwIfVersionFormatIncorrect(String versionText) throws RequestException {
-    if (!versionText.matches("HTTP/\\d\\.\\d")){
+    if (!versionText.matches("HTTP/\\d\\.\\d")) {
       throw new RequestException(ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
   }
