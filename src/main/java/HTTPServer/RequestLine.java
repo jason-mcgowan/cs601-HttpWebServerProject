@@ -12,6 +12,15 @@ public class RequestLine {
     this.version = version;
   }
 
+  @Override
+  public String toString() {
+    return "RequestLine{" +
+        "method=" + method +
+        ", requestURI='" + requestURI + '\'' +
+        ", version=" + version +
+        '}';
+  }
+
   public Method getMethod() {
     return method;
   }
