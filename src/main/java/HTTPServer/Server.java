@@ -52,6 +52,7 @@ public class Server {
     }
   }
 
+  // todo remove synchronized
   private synchronized void handleConnection(Socket client) {
     handlerLock.readLock().lock();
     try (InputStreamReader isr = new InputStreamReader(client.getInputStream(),
