@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 public final class HeaderReader {
 
+  private static final String END_HEADER_SECTION = "\r\n\r\n";
+
   private HeaderReader() {
   }
 
@@ -19,7 +21,7 @@ public final class HeaderReader {
       while (keepReading) {
         read = isr.read();
         if (read == -1) {
-          keepReading = false;
+          throw new IOException();
         } else {
           char c = (char) read;
           // todo

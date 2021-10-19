@@ -57,6 +57,7 @@ public class Server {
     handlerLock.readLock().lock();
     try {
       // todo get and handle request
+      // todo send response, close socket
       client.getOutputStream()
           .write(
               ("HTTP/1.1 200 OK\r\n"
