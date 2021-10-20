@@ -38,7 +38,7 @@ public class RequestReaderTest {
     } catch (IOException e) {
       Assert.fail();
     } catch (RequestException e) {
-      Assert.assertEquals(ResponseCode.SERVER_ERROR_501_NOT_IMPLEMENTED, e.getResponseCode());
+      Assert.assertEquals(StatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED, e.getResponseCode());
     }
   }
 

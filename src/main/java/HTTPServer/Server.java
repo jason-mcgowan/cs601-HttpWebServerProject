@@ -2,6 +2,7 @@ package HTTPServer;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -31,10 +32,9 @@ public class Server {
   public synchronized void start(int port) {
     try {
       server = new ServerSocket(port);
-      System.out.println("Server started on port: " + port);
+      System.out.println("Server started on port: " + port); // todo remove or log
     } catch (IOException e) {
-      // todo log
-      System.out.println("Error: " + e.getLocalizedMessage());
+      System.out.println("Error: " + e.getLocalizedMessage()); // todo log
     }
     connectionListenerThread.execute(this::listenForClients);
   }
@@ -43,26 +43,54 @@ public class Server {
     try {
       while (!server.isClosed() && server.isBound()) {
         Socket newConnection = server.accept();
-        System.out.println("New connection from: " + newConnection);
+        System.out.println("New connection from: " + newConnection); // todo log or remove
         clientThreads.execute(() -> handleConnection(newConnection));
       }
     } catch (IOException e) {
-      System.out.println("Error connecting");
-      // todo log
+      System.out.println("Error connecting"); // todo log
     }
   }
 
-  // todo remove synchronized
-  private synchronized void handleConnection(Socket client) {
-    handlerLock.readLock().lock();
-    try (InputStreamReader isr = new InputStreamReader(client.getInputStream(),
-        StandardCharsets.US_ASCII)) {
+  private void handleConnection(Socket client) {
+    String response;
+    InputStreamReader isr;
+    try {
+      isr = new InputStreamReader(client.getInputStream(), StandardCharsets.US_ASCII);
       Request request = RequestReader.readRequest(isr);
-      // todo send response, close socket
-    } catch (IOException | RequestException e) {
-      // todo send response to client
+      response = getResponse(request);
+      respondToClient(response, client);
+    } catch (IOException e) {
+      // todo log here?
+    } catch (RequestException e) {
+      response = Responses.getStandardErrorResponse(e);
+      respondToClient(response, client);
+    }
+  }
+
+  private String getResponse(Request request) throws RequestException {
+    String uri = request.getRequestLine().getRequestURI();
+    handlerLock.readLock().lock();
+    try {
+      if (handlers.containsKey(uri)) {
+        return handlers.get(uri).respond(request);
+      } else {
+        throw new RequestException("Resource not found: " + uri,
+            StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+      }
     } finally {
       handlerLock.readLock().unlock();
+    }
+  }
+
+  private void respondToClient(String response, Socket client) {
+    try {
+      OutputStreamWriter osw = new OutputStreamWriter(client.getOutputStream(),
+          StandardCharsets.US_ASCII);
+      osw.write(response);
+      osw.flush();
+      System.out.println(response);
+    } catch (IOException e) {
+      // todo logging
     }
   }
 }

@@ -1,18 +1,18 @@
 package HTTPServer;
 
 public class RequestException extends Exception {
-  private ResponseCode responseCode;
+  private StatusCode statusCode;
 
-  public RequestException(ResponseCode responseCode) {
-    this.responseCode = responseCode;
+  public RequestException(StatusCode statusCode) {
+    this.statusCode = statusCode;
   }
 
-  public RequestException(String message, ResponseCode responseCode) {
+  public RequestException(String message, StatusCode statusCode) {
     super(message);
-    this.responseCode = responseCode;
+    this.statusCode = statusCode;
   }
 
-  public ResponseCode getResponseCode() {
-    return responseCode;
+  public StatusCode getResponseCode() {
+    return statusCode;
   }
 }

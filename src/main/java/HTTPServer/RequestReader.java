@@ -18,7 +18,7 @@ public class RequestReader {
     } else if (headers.containsKey(TRANSFER_ENCODING_FIELD)) {
       throw new RequestException(
           "Server only supports payload bodies using content-length header",
-          ResponseCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
+          StatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
     }
     return new Request(requestLine, headers, body);
   }
@@ -32,7 +32,7 @@ public class RequestReader {
       body = readToString(isr, bodySize);
     } catch (NumberFormatException e) {
       throw new RequestException("content-length value not an integer",
-          ResponseCode.CLIENT_ERROR_400_BAD_REQUEST);
+          StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
     return body;
   }
