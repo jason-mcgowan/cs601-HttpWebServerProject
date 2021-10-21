@@ -1,4 +1,4 @@
-package HTTPServer;
+package httpserver;
 
 public enum Version {
   HTTP_1_1(1, 1);

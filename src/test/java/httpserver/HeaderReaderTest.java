@@ -1,4 +1,4 @@
-package HTTPServer;
+package httpserver;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

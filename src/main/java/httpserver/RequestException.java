@@ -1,4 +1,4 @@
-package HTTPServer;
+package httpserver;
 
 public class RequestException extends Exception {
   private StatusCode statusCode;

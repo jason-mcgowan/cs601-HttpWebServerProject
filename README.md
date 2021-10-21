@@ -38,7 +38,7 @@ The examples below show how my API is used for the required applications below.
 public class SearchApplication {
 	public static void main(String[] args) {
 		int port = 1024;
-		HTTPServer server = new HTTPServer(port);
+		httpserver server = new httpserver(port);
 		//The request GET /reviewsearch will be dispatched to the 
 		//handle method of the ReviewSearchHandler.
 		server.addMapping("/reviewsearch", new ReviewSearchHandler());
@@ -55,7 +55,7 @@ public class SearchApplication {
 public class ChatApplication {
 	public static void main(String[] args) {
 		int port = 1024;
-		HTTPServer server = new HTTPServer(port);
+		httpserver server = new httpserver(port);
 		server.addMapping("/slackbot", new ChatHandler());
 		server.startup();
 	}

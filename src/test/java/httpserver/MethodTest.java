@@ -1,6 +1,4 @@
-package HTTPServer;
-
-import static org.junit.Assert.*;
+package httpserver;
 
 import org.junit.Assert;
 import org.junit.Test;
