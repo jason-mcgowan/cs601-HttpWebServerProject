@@ -1,8 +1,6 @@
 package httpserver.handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import cs601.project1.FileJsonParser;
 import cs601.project1.Review;
 import cs601.project1.SearchTableP1;
 import httpserver.Handler;
@@ -13,25 +11,29 @@ import httpserver.Responses;
 import httpserver.StatusCode;
 import httpserver.util.HtmlBuilder;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 public class ReviewSearchHandler implements Handler {
 
-  private static final String GET_RESPONSE = initializeGetResponse();
   private static final String QUERY_KEY = "query=";
 
-  private SearchTableP1<Review> reviews;
+  private final SearchTableP1<Review> reviews = new SearchTableP1<>();
+  private final String mapping;
+  private final String domain;
+  private final String getResponse;
 
-  public ReviewSearchHandler() {
+  public ReviewSearchHandler(String mapping, String domain) {
+    this.mapping = mapping;
+    this.domain = domain;
+    getResponse = initializeGetResponse();
   }
 
-  private static String initializeGetResponse() {
-    String form = HtmlBuilder.inputTextForPost("/reviewsearch", "Word to search:", "query",
+  private String initializeGetResponse() {
+    String form = HtmlBuilder.inputTextForPost(mapping, "Word to search:", "query",
         "Search");
-    String page = HtmlBuilder.simplePage("localhost:8080", "Review Search", form);
+    String page = HtmlBuilder.simplePage(domain, "Review Search", form);
     return Responses.getMessage(page);
   }
 
@@ -40,7 +42,7 @@ public class ReviewSearchHandler implements Handler {
     Method method = request.getRequestLine().getMethod();
     switch (method) {
       case GET -> {
-        return GET_RESPONSE;
+        return getResponse;
       }
       case POST -> {
         return postResponse(request);
@@ -52,42 +54,29 @@ public class ReviewSearchHandler implements Handler {
 
   private String postResponse(Request request) throws RequestException {
     String term = getTermOrThrow(request.getBody());
-    String body = reviews.fullWordSearch(term);
-    return Responses.getMessage(body);
+    String body = buildBodyFromSearchResults(term);
+    String page = HtmlBuilder.simplePage("localhost:8080", "Results", body);
+    return Responses.getMessage(page);
+  }
+
+  private String buildBodyFromSearchResults(String term) {
+    StringBuilder sb = new StringBuilder();
+    reviews.fullWordSearchStream(term).forEach(r -> sb.append("<p>").append(r).append("</p>"));
+    return sb.toString();
   }
 
   private String getTermOrThrow(String body) throws RequestException {
     int qIndex = body.indexOf(QUERY_KEY);
     if (qIndex == -1) {
-      throw new RequestException("Message body does not include " + QUERY_KEY + "term",
+      throw new RequestException("Message body does not include " + QUERY_KEY + "key",
           StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
     int termInd = qIndex + QUERY_KEY.length();
-    // todo add in URL decoder
-    return body.substring(termInd).split(" ", 1)[0];
+    String decoded = URLDecoder.decode(body.substring(termInd), StandardCharsets.ISO_8859_1);
+    return decoded.split(" ", 1)[0];
   }
 
   public void parseInReviews(Path path) throws IOException {
-    Gson gson = new GsonBuilder().setLenient().create();
-
-    try (Stream<String> lines = Files.lines(path, StandardCharsets.ISO_8859_1)) {
-      lines
-          .map(line -> parse(gson, line))
-          .forEach(
-              review -> {
-                if (review != null) {
-                  reviews.add(review);
-                }
-              });
-    }
-  }
-
-  private Review parse(Gson gson, String json) {
-    try {
-      return gson.fromJson(json, Review.class);
-    } catch (JsonSyntaxException e) {
-      // todo logging
-      return null;
-    }
+    FileJsonParser.parseByStream(path, Review.class, reviews::add);
   }
 }

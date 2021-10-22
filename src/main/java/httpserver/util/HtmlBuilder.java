@@ -4,7 +4,7 @@ public final class HtmlBuilder {
 
   private static final String START_TO_NAMESPACE = "<!DOCTYPE HTML>\n<html xmlns=\"";
   private static final String NAMESPACE_TO_TITLE = "\">\n<head>\n<title>";
-  private static final String TITLE_TO_BODY = "</title>\n</head>\n<body>\n\n";
+  private static final String TITLE_TO_BODY = "</title>\n</head>\n<body>\n";
   private static final String BODY_TO_END = "\n</body>\n</html>";
 
   private HtmlBuilder() {

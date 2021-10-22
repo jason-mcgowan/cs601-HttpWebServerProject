@@ -28,7 +28,6 @@ public class Responses {
         + "Content-type: text/html; charset=US-ASCII\r\n"
         + "Content-length: " + body.length() + "\r\n"
         + "Connection: close\r\n"
-//        + "Connection: close\r\n"
         + "\r\n"
         + body;
   }

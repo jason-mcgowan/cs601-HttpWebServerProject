@@ -63,6 +63,7 @@ public class Server {
     } catch (IOException e) {
       // todo log here?
     } catch (RequestException e) {
+      System.out.println("Error with request: " + e.getLocalizedMessage());
       response = Responses.getStandardErrorResponse(e);
       respondToClient(response, client);
     }

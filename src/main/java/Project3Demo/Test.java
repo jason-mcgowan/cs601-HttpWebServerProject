@@ -1,27 +1,40 @@
 package Project3Demo;
 
+import cs601.project1.FileJsonParser;
+import cs601.project1.Review;
+import cs601.project1.SearchTableP1;
 import httpserver.Server;
 import httpserver.handlers.ReviewSearchHandler;
-import httpserver.util.HtmlBuilder;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 public class Test {
 
   public static void main(String[] args)
       throws URISyntaxException, IOException, InterruptedException {
     testServer();
+
+
+//    SearchTableP1<Review> reviews = new SearchTableP1<>();
+//    String file = "Cell_Phones_and_Accessories_5_short.json";
+//    FileJsonParser.parseByStream(Paths.get(file), Review.class, reviews::add);
+//    System.out.println(reviews.fullWordSearch("venezuela"));
   }
 
-  private static void testServer() {
-    Server server = new Server();
-    server.addMapping("/reviewsearch", new ReviewSearchHandler());
-    server.start(8080);
 
+  private static void testServer() throws IOException {
+    Server server = new Server();
+    String mapping = "/reviewsearch";
+    ReviewSearchHandler rsh = new ReviewSearchHandler(mapping, "localhost:8080");
+    rsh.parseInReviews(Paths.get("Cell_Phones_and_Accessories_5_short.json"));
+    server.addMapping(mapping, rsh);
+
+    server.start(8080);
 
 //    URI uri = new URI("http://localhost:8080/");
 ////    URI uri = new URI("http://www.google.com/");
