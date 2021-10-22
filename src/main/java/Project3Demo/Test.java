@@ -5,6 +5,7 @@ import cs601.project1.Review;
 import cs601.project1.SearchTableP1;
 import httpserver.Server;
 import httpserver.handlers.ReviewSearchHandler;
+import httpserver.handlers.TableAsinFindHandler;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -19,7 +20,6 @@ public class Test {
       throws URISyntaxException, IOException, InterruptedException {
     testServer();
 
-
 //    SearchTableP1<Review> reviews = new SearchTableP1<>();
 //    String file = "Cell_Phones_and_Accessories_5_short.json";
 //    FileJsonParser.parseByStream(Paths.get(file), Review.class, reviews::add);
@@ -33,6 +33,14 @@ public class Test {
     ReviewSearchHandler rsh = new ReviewSearchHandler(mapping, "localhost:8080");
     rsh.parseInReviews(Paths.get("Cell_Phones_and_Accessories_5_short.json"));
     server.addMapping(mapping, rsh);
+
+    String findMap = "/find";
+    SearchTableP1<Review> reviews = new SearchTableP1<>();
+    FileJsonParser.parseByStream(Paths.get("Cell_Phones_and_Accessories_5_short.json"),
+        Review.class, reviews::add);
+    TableAsinFindHandler<Review> tafHandler = new TableAsinFindHandler<>(reviews, findMap,
+        "localhost:8080");
+    server.addMapping(findMap, tafHandler);
 
     server.start(8080);
 
