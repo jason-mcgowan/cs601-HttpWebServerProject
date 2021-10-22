@@ -34,7 +34,7 @@ public class Server {
       server = new ServerSocket(port);
       System.out.println("Server started on port: " + port); // todo remove or log
     } catch (IOException e) {
-      System.out.println("Error: " + e.getLocalizedMessage()); // todo log
+      // todo log
     }
     connectionListenerThread.execute(this::listenForClients);
   }
@@ -43,11 +43,11 @@ public class Server {
     try {
       while (!server.isClosed() && server.isBound()) {
         Socket newConnection = server.accept();
-        System.out.println("New connection from: " + newConnection); // todo log or remove
+        // todo log
         clientThreads.execute(() -> handleConnection(newConnection));
       }
     } catch (IOException e) {
-      System.out.println("Error connecting"); // todo log
+      // todo log
     }
   }
 
@@ -57,13 +57,11 @@ public class Server {
     try {
       isr = new InputStreamReader(client.getInputStream(), StandardCharsets.US_ASCII);
       Request request = RequestReader.readRequest(isr);
-      System.out.println("Received request: " + request);
       response = getResponse(request);
       respondToClient(response, client);
     } catch (IOException e) {
       // todo log here?
     } catch (RequestException e) {
-      System.out.println("Error with request: " + e.getLocalizedMessage());
       response = Responses.getStandardErrorResponse(e);
       respondToClient(response, client);
     }
@@ -90,7 +88,6 @@ public class Server {
           StandardCharsets.US_ASCII);
       osw.write(response);
       osw.flush();
-      System.out.println(response);
     } catch (IOException e) {
       // todo logging
     }

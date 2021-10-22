@@ -55,7 +55,7 @@ public class ReviewSearchHandler implements Handler {
   private String postResponse(Request request) throws RequestException {
     String term = getTermOrThrow(request.getBody());
     String body = buildBodyFromSearchResults(term);
-    String page = HtmlBuilder.simplePage("localhost:8080", "Results", body);
+    String page = HtmlBuilder.simplePage(domain, "Results", body);
     return Responses.getMessage(page);
   }
 
