@@ -27,9 +27,13 @@ public class Responses {
         + "Date: " + date + "\r\n"
         + "Content-type: text/html; charset=US-ASCII\r\n"
         + "Content-length: " + body.length() + "\r\n"
-        + "Connection: keep-alive\r\n"
+        + "Connection: close\r\n"
 //        + "Connection: close\r\n"
         + "\r\n"
         + body;
+  }
+
+  public static String getMessage(String body) {
+    return getMessage(Version.HTTP_1_1, StatusCode.SUCCESS_200_OK, body);
   }
 }

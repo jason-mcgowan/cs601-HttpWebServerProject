@@ -1,16 +1,17 @@
 package httpserver.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import cs601.project1.Review;
+import cs601.project1.SearchTableP1;
 import httpserver.Handler;
 import httpserver.Method;
 import httpserver.Request;
 import httpserver.RequestException;
 import httpserver.Responses;
 import httpserver.StatusCode;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-import cs601.project1.Review;
-import cs601.project1.SearchTableP1;
+import httpserver.util.HtmlBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
 public class ReviewSearchHandler implements Handler {
 
   private static final String GET_RESPONSE = initializeGetResponse();
-  private static final String QUERY_TERM = "query=";
+  private static final String QUERY_KEY = "query=";
 
   private SearchTableP1<Review> reviews;
 
@@ -28,8 +29,10 @@ public class ReviewSearchHandler implements Handler {
   }
 
   private static String initializeGetResponse() {
-    // todo
-    return null;
+    String form = HtmlBuilder.inputTextForPost("/reviewsearch", "Word to search:", "query",
+        "Search");
+    String page = HtmlBuilder.simplePage("localhost:8080", "Review Search", form);
+    return Responses.getMessage(page);
   }
 
   @Override
@@ -49,21 +52,17 @@ public class ReviewSearchHandler implements Handler {
 
   private String postResponse(Request request) throws RequestException {
     String term = getTermOrThrow(request.getBody());
-    return getHttpResponse(reviews.fullWordSearch(term));
-  }
-
-  private String getHttpResponse(String fullWordSearch) {
-    // todo
-    return Responses.getTestPage();
+    String body = reviews.fullWordSearch(term);
+    return Responses.getMessage(body);
   }
 
   private String getTermOrThrow(String body) throws RequestException {
-    int qIndex = body.indexOf(QUERY_TERM);
+    int qIndex = body.indexOf(QUERY_KEY);
     if (qIndex == -1) {
-      throw new RequestException("Message body does not include " + QUERY_TERM + "term",
+      throw new RequestException("Message body does not include " + QUERY_KEY + "term",
           StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
-    int termInd = qIndex + QUERY_TERM.length();
+    int termInd = qIndex + QUERY_KEY.length();
     // todo add in URL decoder
     return body.substring(termInd).split(" ", 1)[0];
   }
@@ -80,7 +79,6 @@ public class ReviewSearchHandler implements Handler {
                   reviews.add(review);
                 }
               });
-
     }
   }
 

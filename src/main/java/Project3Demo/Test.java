@@ -1,6 +1,8 @@
 package Project3Demo;
 
 import httpserver.Server;
+import httpserver.handlers.ReviewSearchHandler;
+import httpserver.util.HtmlBuilder;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -12,8 +14,14 @@ public class Test {
 
   public static void main(String[] args)
       throws URISyntaxException, IOException, InterruptedException {
+    testServer();
+  }
+
+  private static void testServer() {
     Server server = new Server();
+    server.addMapping("/reviewsearch", new ReviewSearchHandler());
     server.start(8080);
+
 
 //    URI uri = new URI("http://localhost:8080/");
 ////    URI uri = new URI("http://www.google.com/");
@@ -55,6 +63,7 @@ public class Test {
       }
     }
   }
+
 
   private static String getResponseDetails(HttpResponse<String> response) {
     return "version=" + response.version()

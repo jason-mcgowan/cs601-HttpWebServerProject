@@ -57,6 +57,7 @@ public class Server {
     try {
       isr = new InputStreamReader(client.getInputStream(), StandardCharsets.US_ASCII);
       Request request = RequestReader.readRequest(isr);
+      System.out.println("Received request: " + request);
       response = getResponse(request);
       respondToClient(response, client);
     } catch (IOException e) {
