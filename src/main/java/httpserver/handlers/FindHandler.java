@@ -4,9 +4,9 @@ import cs601.project1.SearchTableP1;
 import cs601.project1.SearchableP1;
 import java.util.stream.Stream;
 
-public class TableAsinFindHandler<T extends SearchableP1> extends SearchTableHandler<T> {
+public class FindHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
-  public TableAsinFindHandler(SearchTableP1<T> table, String mapping,
+  public FindHandler(SearchTableP1<T> table, String mapping,
       String domain) {
     super(table, mapping, domain);
   }

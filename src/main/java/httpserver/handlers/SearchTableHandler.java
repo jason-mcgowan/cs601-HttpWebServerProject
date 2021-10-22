@@ -71,12 +71,13 @@ public abstract class SearchTableHandler<T extends SearchableP1> implements Hand
   protected abstract Stream<T> searchResults(String term);
 
   private String getTermOrThrow(String body) throws RequestException {
-    int qIndex = body.indexOf(postKey);
+    String key = postKey + "=";
+    int qIndex = body.indexOf(key);
     if (qIndex == -1) {
-      throw new RequestException("Message body does not include " + postKey + "key",
+      throw new RequestException("Message body does not include key: " + postKey,
           StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
-    int termInd = qIndex + postKey.length() + 1;
+    int termInd = qIndex + key.length();
     String decoded = URLDecoder.decode(body.substring(termInd), StandardCharsets.ISO_8859_1);
     return decoded.split(" ", 1)[0];
   }
