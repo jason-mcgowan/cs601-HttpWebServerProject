@@ -32,18 +32,18 @@ public class HeaderReaderTest {
     assertValidResults(validHeader);
   }
 
-  @Test(expected = IOException.class)
-  public void EMPTY_FIELD_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void EMPTY_FIELD_THROWS_BAD_REQUEST() {
     String header = ": " + goodValue1 + CRLF
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
-  @Test(expected = IOException.class)
-  public void LEADING_SPACE_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void LEADING_SPACE_THROWS_BAD_REQUEST() {
     String header = " " + goodField1 + ":" + goodValue1 + CRLF
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
   @Test
@@ -54,45 +54,45 @@ public class HeaderReaderTest {
     assertValidResults(validHeader);
   }
 
-  @Test(expected = IOException.class)
-  public void SPACE_IN_FIELD_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void SPACE_IN_FIELD_THROWS_BAD_REQUEST() {
     String header = "bad field: " + goodValue1 + CRLF
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
-  @Test(expected = IOException.class)
-  public void CR_IN_FIELD_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void CR_IN_FIELD_THROWS_BAD_REQUEST() {
     String header = "bad\rfield: " + goodValue1 + CRLF
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
-  @Test(expected = IOException.class)
-  public void LF_IN_FIELD_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void LF_IN_FIELD_THROWS_BAD_REQUEST() {
     String header = "bad\nfield: " + goodValue1 + CRLF
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
-  @Test(expected = IOException.class)
-  public void LF_IN_VALUE_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void LF_IN_VALUE_THROWS_BAD_REQUEST() {
     String header = goodField1 + ": this\n isn't allowed" + CRLF
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
-  @Test(expected = IOException.class)
-  public void BAD_LINE_TERM_PATTERN_THROWS_IOEXCEPTION() throws IOException {
+  @Test
+  public void BAD_LINE_TERM_PATTERN_THROWS_BAD_REQUEST() {
     String header = goodField1 + ":" + goodValue1 + "\r \n"
         + CRLF;
-    assertReadingThrowsIOException(header);
+    assertReadingThrowsBadRequest(header);
   }
 
   private void assertValidResults(String validHeader) {
     try {
       headers = HeaderReader.readHeaderLines(getInputStream(validHeader));
-    } catch (IOException e) {
+    } catch (IOException | RequestException e) {
       Assert.fail();
     }
     Assert.assertTrue(headers.containsKey(goodField1.toLowerCase()));
@@ -102,9 +102,15 @@ public class HeaderReaderTest {
     Assert.assertEquals(2, headers.size());
   }
 
-  private void assertReadingThrowsIOException(String header) throws IOException {
-    headers = HeaderReader.readHeaderLines(getInputStream(header));
-    Assert.fail();
+  private void assertReadingThrowsBadRequest(String header) {
+    try {
+      headers = HeaderReader.readHeaderLines(getInputStream(header));
+      Assert.fail();
+    } catch (IOException e) {
+      Assert.fail();
+    } catch (RequestException e) {
+      Assert.assertEquals(StatusCode.CLIENT_ERROR_400_BAD_REQUEST, e.getResponseCode());
+    }
   }
 
   private InputStreamReader getInputStream(String text) {
