@@ -39,6 +39,8 @@ public class Server {
     connectionListenerThread.execute(this::listenForClients);
   }
 
+  // todo add shutdown scheme
+
   private void listenForClients() {
     try {
       while (!server.isClosed() && server.isBound()) {
@@ -75,7 +77,7 @@ public class Server {
         return handlers.get(uri).respond(request);
       } else {
         throw new RequestException("Resource not found: " + uri,
-            StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+            StatusCode.CLIENT_ERROR_404_NOT_FOUND);
       }
     } finally {
       handlerLock.readLock().unlock();
