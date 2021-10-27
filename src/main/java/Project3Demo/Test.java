@@ -13,11 +13,12 @@ import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class Test {
 
   public static void main(String[] args)
-      throws URISyntaxException, IOException, InterruptedException {
+      throws IOException {
     testServer();
 
 //    SearchTableP1<Review> reviews = new SearchTableP1<>();
@@ -42,6 +43,21 @@ public class Test {
     server.addMapping(findMap, tafHandler);
 
     server.start(8080);
+
+    try (Scanner scanner = new Scanner(System.in)) {
+      boolean running = true;
+      String input;
+      while (running) {
+        System.out.print("\n" + "Type shutdown> ");
+        input = scanner.nextLine();
+        if (input.equalsIgnoreCase("shutdown")) {
+          System.out.println("Shutting down...");
+          server.shutdown();
+          System.out.println("Server shutdown");
+          running = false;
+        }
+      }
+    }
 
 //    URI uri = new URI("http://localhost:8080/");
 ////    URI uri = new URI("http://www.google.com/");

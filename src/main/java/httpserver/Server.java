@@ -25,21 +25,30 @@ public class Server {
 
   public void addMapping(String term, Handler handler) {
     handlerLock.writeLock().lock();
-    handlers.put(term, handler);
-    handlerLock.writeLock().unlock();
+    try {
+      handlers.put(term, handler);
+    } finally {
+      handlerLock.writeLock().unlock();
+    }
   }
 
-  public synchronized void start(int port) {
-    try {
-      server = new ServerSocket(port);
-      System.out.println("Server started on port: " + port); // todo remove or log
-    } catch (IOException e) {
-      // todo log
-    }
+  public synchronized void start(int port) throws IOException {
+    server = new ServerSocket(port);
+    System.out.println("Server started on port: " + port); // todo remove or log
     connectionListenerThread.execute(this::listenForClients);
   }
 
   // todo add shutdown scheme
+  public synchronized void shutdown() throws IOException {
+    handlerLock.writeLock().lock();
+    try {
+      server.close();
+      clientThreads.shutdown();
+      connectionListenerThread.shutdown();
+    } finally {
+      handlerLock.writeLock().unlock();
+    }
+  }
 
   private void listenForClients() {
     try {
