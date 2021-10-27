@@ -35,11 +35,11 @@ public class Test {
         Review.class, reviews::add);
     String rshMap = "/reviewsearch";
     String domain = "localhost:8080";
-    ReviewSearchHandler<Review> rsh = new ReviewSearchHandler<>(reviews, rshMap, domain);
+    ReviewSearchHandler<Review> rsh = new ReviewSearchHandler<>(reviews, domain);
     server.addMapping(rshMap, rsh);
 
     String findMap = "/find";
-    FindHandler<Review> tafHandler = new FindHandler<>(reviews, findMap, domain);
+    FindHandler<Review> tafHandler = new FindHandler<>(reviews, domain);
     server.addMapping(findMap, tafHandler);
 
     server.start(8080);

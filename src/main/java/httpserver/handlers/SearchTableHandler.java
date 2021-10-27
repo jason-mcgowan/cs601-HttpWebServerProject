@@ -17,26 +17,16 @@ public abstract class SearchTableHandler<T extends SearchableP1> implements Hand
 
   protected final SearchTableP1<T> table;
   private final String postKey;
-  private final String mapping;
   private final String domain;
-  private final String getResponse;
+  private String getResponse;
 
-  protected SearchTableHandler(SearchTableP1<T> table, String mapping, String domain) {
+  protected SearchTableHandler(SearchTableP1<T> table, String domain) {
     this.table = table;
-    this.mapping = mapping;
     this.domain = domain;
     this.postKey = initPostKey();
-    getResponse = initGetResponse();
   }
 
   protected abstract String initPostKey();
-
-  private String initGetResponse() {
-    String form = HtmlBuilder.inputTextForPost(mapping, getSearchBoxLabel(), postKey,
-        "Search");
-    String page = HtmlBuilder.simplePage(domain, "Record Search", form);
-    return Responses.getMessage(page);
-  }
 
   protected abstract String getSearchBoxLabel();
 
@@ -53,6 +43,18 @@ public abstract class SearchTableHandler<T extends SearchableP1> implements Hand
       default -> throw new RequestException("Method not supported: " + method.getId(),
           StatusCode.CLIENT_ERROR_405_METHOD_NOT_ALLOWED);
     }
+  }
+
+  @Override
+  public void setMapping(String url) {
+    getResponse = buildGetResponse(url);
+  }
+
+  private String buildGetResponse(String url) {
+    String form = HtmlBuilder.inputTextForPost(url, getSearchBoxLabel(), postKey,
+        "Search");
+    String page = HtmlBuilder.simplePage(domain, "Record Search", form);
+    return Responses.getMessage(page);
   }
 
   private String postResponse(Request request) throws RequestException {

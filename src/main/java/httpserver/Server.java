@@ -23,13 +23,14 @@ public class Server {
   public Server() {
   }
 
-  public void addMapping(String term, Handler handler) {
+  public void addMapping(String url, Handler handler) {
     handlerLock.writeLock().lock();
     try {
-      handlers.put(term, handler);
+      handlers.put(url, handler);
     } finally {
       handlerLock.writeLock().unlock();
     }
+    handler.setMapping(url);
   }
 
   public synchronized void start(int port) throws IOException {

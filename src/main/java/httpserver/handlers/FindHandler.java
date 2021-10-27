@@ -6,9 +6,8 @@ import java.util.stream.Stream;
 
 public class FindHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
-  public FindHandler(SearchTableP1<T> table, String mapping,
-      String domain) {
-    super(table, mapping, domain);
+  public FindHandler(SearchTableP1<T> table, String domain) {
+    super(table, domain);
   }
 
   @Override
