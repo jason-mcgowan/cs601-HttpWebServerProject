@@ -7,8 +7,8 @@ import java.util.stream.Stream;
 
 public class ReviewSearchHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
-  public ReviewSearchHandler(SearchTableP1<T> table, String domain) {
-    super(table, domain);
+  public ReviewSearchHandler(String domain, SearchTableP1<T> table) {
+    super(domain, table);
   }
 
   @Override
@@ -17,8 +17,13 @@ public class ReviewSearchHandler<T extends SearchableP1> extends SearchTableHand
   }
 
   @Override
-  protected String getSearchBoxLabel() {
-    return "Review text search word:";
+  protected String getInputTextBoxLabel() {
+    return "Single word to search for";
+  }
+
+  @Override
+  protected String getGetPageTitle() {
+    return "Review Search";
   }
 
   @Override

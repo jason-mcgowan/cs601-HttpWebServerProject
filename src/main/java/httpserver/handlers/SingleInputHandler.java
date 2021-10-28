@@ -13,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class SingleInputHandler implements Handler {
 
-  private final String postKey;
-  private final String domain;
-  private String getResponse;
+  protected final String postKey;
+  protected final String domain;
+  protected String getResponse;
 
   public SingleInputHandler(String domain) {
     this.postKey = initPostKey();
