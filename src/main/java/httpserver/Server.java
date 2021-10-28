@@ -89,9 +89,14 @@ public class Server {
         throw new RequestException("Resource not found: " + uri,
             StatusCode.CLIENT_ERROR_404_NOT_FOUND);
       }
+    } catch (IOException e) {
+      // todo logging
+    } catch (InterruptedException e) {
+      // todo logging
     } finally {
       handlerLock.readLock().unlock();
     }
+    return null;
   }
 
   private void respondToClient(String response, Socket client) {

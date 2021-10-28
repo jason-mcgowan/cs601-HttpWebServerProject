@@ -7,6 +7,9 @@ import httpserver.RequestException;
 import httpserver.Responses;
 import httpserver.StatusCode;
 import httpserver.util.HtmlBuilder;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public abstract class SingleInputHandler implements Handler {
 
@@ -14,21 +17,19 @@ public abstract class SingleInputHandler implements Handler {
   private final String domain;
   private String getResponse;
 
-  public SingleInputHandler(String postKey, String domain) {
-    this.postKey = postKey;
+  public SingleInputHandler(String domain) {
+    this.postKey = initPostKey();
     this.domain = domain;
   }
 
-  protected abstract String initPostKey();
-
-  protected abstract String getInputTextBoxLabel();
-
-  protected abstract String postResponse(Request request);
-
-  protected abstract String getGetPageTitle();
+  @Override
+  public final void setMapping(String url) {
+    getResponse = buildGetResponse(url);
+  }
 
   @Override
-  public String respond(Request request) throws RequestException {
+  public final String respond(Request request)
+      throws RequestException, IOException, InterruptedException {
     Method method = request.getRequestLine().getMethod();
     switch (method) {
       case GET -> {
@@ -42,9 +43,30 @@ public abstract class SingleInputHandler implements Handler {
     }
   }
 
-  @Override
-  public void setMapping(String url) {
-    getResponse = buildGetResponse(url);
+  protected abstract String initPostKey();
+
+  protected abstract String getPostTermResponse(String term)
+      throws IOException, InterruptedException;
+
+  protected abstract String getInputTextBoxLabel();
+
+  protected abstract String getGetPageTitle();
+
+  private String postResponse(Request request)
+      throws RequestException, IOException, InterruptedException {
+    String term = getTermOrThrow(request.getBody());
+    return getPostTermResponse(term);
+  }
+
+  private String getTermOrThrow(String body) throws RequestException {
+    String decoded = URLDecoder.decode(body, StandardCharsets.US_ASCII);
+    String keyId = postKey + "=";
+    if (!decoded.startsWith(keyId)) {
+      throw new RequestException("Message body does not start with key: " + postKey,
+          StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+    }
+    int termInd = keyId.length();
+    return decoded.substring(termInd).split(" ", 1)[0];
   }
 
   private String buildGetResponse(String url) {

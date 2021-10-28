@@ -4,12 +4,12 @@ import cs601.project1.FileJsonParser;
 import cs601.project1.Review;
 import cs601.project1.SearchTableP1;
 import httpserver.Server;
+import httpserver.handlers.ChatHandler;
 import httpserver.handlers.FindHandler;
 import httpserver.handlers.ReviewSearchHandler;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -42,6 +42,9 @@ public class Test {
     FindHandler<Review> tafHandler = new FindHandler<>(reviews, domain);
     server.addMapping(findMap, tafHandler);
 
+    ChatHandler ch = new ChatHandler(domain,
+        "https://hooks.slack.com/services/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");
+    server.addMapping("/slackbot", ch);
     server.start(8080);
 
     try (Scanner scanner = new Scanner(System.in)) {
