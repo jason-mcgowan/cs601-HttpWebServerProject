@@ -91,8 +91,6 @@ public class Server {
       }
     } catch (IOException e) {
       // todo logging
-    } catch (InterruptedException e) {
-      // todo logging
     } finally {
       handlerLock.readLock().unlock();
     }

@@ -29,7 +29,7 @@ public abstract class SingleInputHandler implements Handler {
 
   @Override
   public final String respond(Request request)
-      throws RequestException, IOException, InterruptedException {
+      throws RequestException, IOException {
     Method method = request.getRequestLine().getMethod();
     switch (method) {
       case GET -> {
@@ -46,14 +46,14 @@ public abstract class SingleInputHandler implements Handler {
   protected abstract String initPostKey();
 
   protected abstract String getPostTermResponse(String term)
-      throws IOException, InterruptedException;
+      throws IOException;
 
   protected abstract String getInputTextBoxLabel();
 
   protected abstract String getGetPageTitle();
 
   private String postResponse(Request request)
-      throws RequestException, IOException, InterruptedException {
+      throws RequestException, IOException {
     String term = getTermOrThrow(request.getBody());
     return getPostTermResponse(term);
   }
