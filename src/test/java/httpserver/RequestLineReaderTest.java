@@ -1,5 +1,8 @@
 package httpserver;
 
+import httpserver.protocol.Method;
+import httpserver.protocol.StatusCode;
+import httpserver.protocol.Version;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

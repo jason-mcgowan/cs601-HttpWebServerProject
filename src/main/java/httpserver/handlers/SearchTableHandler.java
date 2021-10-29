@@ -2,16 +2,9 @@ package httpserver.handlers;
 
 import cs601.project1.SearchTableP1;
 import cs601.project1.SearchableP1;
-import httpserver.Handler;
-import httpserver.Method;
-import httpserver.Request;
-import httpserver.RequestException;
-import httpserver.Responses;
-import httpserver.StatusCode;
+import httpserver.util.Responses;
 import httpserver.util.HtmlBuilder;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 public abstract class SearchTableHandler<T extends SearchableP1> extends SingleInputHandler {

@@ -1,5 +1,7 @@
 package httpserver;
 
+import httpserver.util.Responses;
+import httpserver.protocol.StatusCode;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;

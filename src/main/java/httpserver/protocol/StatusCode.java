@@ -1,4 +1,4 @@
-package httpserver;
+package httpserver.protocol;
 
 // https://www.rfc-editor.org/rfc/rfc7231.html#section-6
 public enum StatusCode {

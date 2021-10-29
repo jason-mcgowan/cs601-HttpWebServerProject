@@ -1,5 +1,6 @@
 package httpserver;
 
+import httpserver.protocol.StatusCode;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;

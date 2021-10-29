@@ -1,5 +1,6 @@
 package httpserver;
 
+import httpserver.protocol.Method;
 import org.junit.Assert;
 import org.junit.Test;
 

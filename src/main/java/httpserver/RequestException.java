@@ -1,5 +1,7 @@
 package httpserver;
 
+import httpserver.protocol.StatusCode;
+
 public class RequestException extends Exception {
   private StatusCode statusCode;
 

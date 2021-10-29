@@ -2,9 +2,9 @@ package httpserver.handlers;
 
 import com.google.gson.JsonObject;
 import httpserver.RequestException;
-import httpserver.Responses;
-import httpserver.StatusCode;
-import httpserver.Version;
+import httpserver.util.Responses;
+import httpserver.protocol.StatusCode;
+import httpserver.protocol.Version;
 import httpserver.util.HtmlBuilder;
 import java.io.IOException;
 import java.net.URI;

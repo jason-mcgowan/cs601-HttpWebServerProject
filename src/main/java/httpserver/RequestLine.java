@@ -1,5 +1,8 @@
 package httpserver;
 
+import httpserver.protocol.Method;
+import httpserver.protocol.Version;
+
 public class RequestLine {
 
   private final Method method;

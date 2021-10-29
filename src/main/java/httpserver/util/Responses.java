@@ -1,5 +1,8 @@
-package httpserver;
+package httpserver.util;
 
+import httpserver.RequestException;
+import httpserver.protocol.StatusCode;
+import httpserver.protocol.Version;
 import java.time.Instant;
 
 public class Responses {

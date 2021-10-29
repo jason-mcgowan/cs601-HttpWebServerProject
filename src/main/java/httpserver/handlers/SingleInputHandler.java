@@ -1,11 +1,11 @@
 package httpserver.handlers;
 
 import httpserver.Handler;
-import httpserver.Method;
+import httpserver.protocol.Method;
 import httpserver.Request;
 import httpserver.RequestException;
-import httpserver.Responses;
-import httpserver.StatusCode;
+import httpserver.util.Responses;
+import httpserver.protocol.StatusCode;
 import httpserver.util.HtmlBuilder;
 import java.io.IOException;
 import java.net.URLDecoder;
