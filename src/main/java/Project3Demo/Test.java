@@ -7,6 +7,7 @@ import httpserver.Server;
 import httpserver.handlers.ChatHandler;
 import httpserver.handlers.FindHandler;
 import httpserver.handlers.ReviewSearchHandler;
+import httpserver.util.FileLogger;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -30,6 +31,9 @@ public class Test {
 
   private static void testServer() throws IOException {
     Server server = new Server();
+    FileLogger logger = new FileLogger();
+    server.getLogEvent().subscribe(logger.getSubscriber());
+
     SearchTableP1<Review> reviews = new SearchTableP1<>();
     FileJsonParser.parseByStream(Paths.get("Cell_Phones_and_Accessories_5_short.json"),
         Review.class, reviews::add);
@@ -81,38 +85,11 @@ public class Test {
 //    getGoogleResponse();
   }
 
-  private static void getGoogleResponse() throws IOException {
-    try (Socket socket = new Socket("www.google.com", 80)) {
-
-      socket.getOutputStream().write(googleGetRequest().getBytes(StandardCharsets.UTF_8));
-      InputStreamReader isr = new InputStreamReader(socket.getInputStream(),
-          StandardCharsets.US_ASCII);
-      int read;
-      boolean keepReading = true;
-
-      while (keepReading) {
-        read = isr.read();
-        if (read == -1) {
-          System.out.println("---------END OF TRANSMISSION----------");
-          keepReading = false;
-        } else {
-          char c = (char) read;
-          System.out.print(c);
-        }
-      }
-    }
-  }
-
 
   private static String getResponseDetails(HttpResponse<String> response) {
     return "version=" + response.version()
         + System.lineSeparator() + "statusCode=" + response.statusCode()
         + System.lineSeparator() + "headers=" + response.headers()
         + System.lineSeparator() + "body=" + response.body();
-  }
-
-  private static String googleGetRequest() {
-    return "GET / HTTP/1.1\r\n\r\n"
-        + "host: www.google.com\r\n";
   }
 }

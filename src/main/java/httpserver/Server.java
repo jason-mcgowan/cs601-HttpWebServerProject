@@ -1,7 +1,9 @@
 package httpserver;
 
-import httpserver.util.Responses;
 import httpserver.protocol.StatusCode;
+import httpserver.util.Event;
+import httpserver.util.Responses;
+import httpserver.util.StringEventArg;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -19,7 +21,7 @@ public class Server {
   private final ReentrantReadWriteLock handlerLock = new ReentrantReadWriteLock();
   private final ExecutorService connectionListenerThread = Executors.newSingleThreadExecutor();
   private final ExecutorService clientThreads = Executors.newCachedThreadPool();
-
+  private final Event<StringEventArg> logEvent = new Event<>();
   private ServerSocket server;
 
   public Server() {
@@ -29,6 +31,7 @@ public class Server {
     handlerLock.writeLock().lock();
     try {
       handlers.put(url, handler);
+      logEvent.invoke(this, new StringEventArg("Added handler with URL: " + url));
     } finally {
       handlerLock.writeLock().unlock();
     }
@@ -37,31 +40,37 @@ public class Server {
 
   public synchronized void start(int port) throws IOException {
     server = new ServerSocket(port);
-    System.out.println("Server started on port: " + port); // todo remove or log
+    logEvent.invoke(this, new StringEventArg("Server started on port: " + port));
     connectionListenerThread.execute(this::listenForClients);
   }
 
-  // todo add shutdown scheme
   public synchronized void shutdown() throws IOException {
     handlerLock.writeLock().lock();
     try {
       server.close();
       clientThreads.shutdown();
       connectionListenerThread.shutdown();
+      logEvent.shutdown();
     } finally {
       handlerLock.writeLock().unlock();
     }
+  }
+
+  public Event<StringEventArg> getLogEvent() {
+    return logEvent;
   }
 
   private void listenForClients() {
     try {
       while (!server.isClosed() && server.isBound()) {
         Socket newConnection = server.accept();
-        // todo log
+        logEvent.invoke(this, new StringEventArg("Client connected: " + newConnection));
         clientThreads.execute(() -> handleConnection(newConnection));
       }
     } catch (IOException e) {
-      // todo log
+      if (!server.isClosed()) {
+        logIOException(e);
+      }
     }
   }
 
@@ -74,7 +83,7 @@ public class Server {
       response = getResponse(request);
       respondToClient(response, client);
     } catch (IOException e) {
-      // todo log here?
+      logIOException(e);
     } catch (RequestException e) {
       response = Responses.getStandardErrorResponse(e);
       respondToClient(response, client);
@@ -92,7 +101,7 @@ public class Server {
             StatusCode.CLIENT_ERROR_404_NOT_FOUND);
       }
     } catch (IOException e) {
-      // todo logging
+      logIOException(e);
     } finally {
       handlerLock.readLock().unlock();
     }
@@ -106,7 +115,12 @@ public class Server {
       osw.write(response);
       osw.flush();
     } catch (IOException e) {
-      // todo logging
+      logIOException(e);
     }
   }
+
+  private void logIOException(IOException e) {
+    logEvent.invoke(this, new StringEventArg("IO Exception: " + e));
+  }
+
 }
