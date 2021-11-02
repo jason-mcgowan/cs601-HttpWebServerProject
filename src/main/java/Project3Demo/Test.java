@@ -31,7 +31,7 @@ public class Test {
 
   private static void testServer() throws IOException {
     Server server = new Server();
-    FileLogger logger = new FileLogger();
+    FileLogger logger = new FileLogger(Paths.get("log.txt"));
     server.getLogEvent().subscribe(logger.getSubscriber());
 
     SearchTableP1<Review> reviews = new SearchTableP1<>();
@@ -60,6 +60,7 @@ public class Test {
         if (input.equalsIgnoreCase("shutdown")) {
           System.out.println("Shutting down...");
           server.shutdown();
+          logger.close();
           System.out.println("Server shutdown");
           running = false;
         }

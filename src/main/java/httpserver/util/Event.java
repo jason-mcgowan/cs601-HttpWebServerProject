@@ -31,6 +31,15 @@ public class Event<A extends EventArg> {
     }
   }
 
+  public void unsubscribeAll() {
+    subLock.writeLock().lock();
+    try {
+      subscribers.clear();
+    } finally {
+      subLock.writeLock().unlock();
+    }
+  }
+
   public void invoke(Object owner, A args) {
     subLock.readLock().lock();
     try {
@@ -60,10 +69,11 @@ public class Event<A extends EventArg> {
     }
   }
 
-  public synchronized void shutdown() {
+  public synchronized void close() {
     if (threadPool == null) {
       return;
     }
     threadPool.shutdown();
+    unsubscribeAll();
   }
 }

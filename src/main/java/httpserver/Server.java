@@ -50,7 +50,7 @@ public class Server {
       server.close();
       clientThreads.shutdown();
       connectionListenerThread.shutdown();
-      logEvent.shutdown();
+      logEvent.close();
     } finally {
       handlerLock.writeLock().unlock();
     }
