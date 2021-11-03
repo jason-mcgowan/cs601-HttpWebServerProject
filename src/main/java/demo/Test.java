@@ -51,14 +51,6 @@ public class Test {
     shutdownHandler.getShutdownRequested().subscribe((o, a) -> System.out.println("Shutdown requested"));
 
     server.start(8080);
-
-    server.getShutdownEvent().subscribe((o, a) -> {
-      try {
-        logger.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    });
   }
 
 //    URI uri = new URI("http://localhost:8080/");

@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
-public class FileLogger implements EventListener<StringEventArg>, AutoCloseable, Closeable {
+public class FileLogger implements EventListener<String>, AutoCloseable, Closeable {
 
   private final BufferedWriter bw;
   private final ExecutorService thread = Executors.newSingleThreadExecutor();
@@ -20,8 +20,8 @@ public class FileLogger implements EventListener<StringEventArg>, AutoCloseable,
     bw = Files.newBufferedWriter(path);
   }
 
-  public void logEventHandler(Object obj, StringEventArg msg) {
-    String text = Instant.now() + ": " + msg.toString() + System.lineSeparator();
+  public void logEventHandler(Object obj, String msg) {
+    String text = Instant.now() + ": " + msg + System.lineSeparator();
     thread.execute(() -> writeToFile(text));
   }
 
@@ -34,7 +34,7 @@ public class FileLogger implements EventListener<StringEventArg>, AutoCloseable,
   }
 
   @Override
-  public BiConsumer<Object, StringEventArg> getSubscriber() {
+  public BiConsumer<Object, String> getSubscriber() {
     return this::logEventHandler;
   }
 

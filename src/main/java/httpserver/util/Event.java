@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiConsumer;
 
-public class Event<A extends EventArg> {
+public class Event<T> {
 
-  private final HashSet<BiConsumer<Object, A>> subscribers = new HashSet<>();
+  private final HashSet<BiConsumer<Object, T>> subscribers = new HashSet<>();
   private final ReentrantReadWriteLock subLock = new ReentrantReadWriteLock();
 
-  public void subscribe(BiConsumer<Object, A> subscriber) {
+  public void subscribe(BiConsumer<Object, T> subscriber) {
     subLock.writeLock().lock();
     try {
       subscribers.add(subscriber);
@@ -18,7 +18,7 @@ public class Event<A extends EventArg> {
     }
   }
 
-  public void unsubscribe(BiConsumer<Object, A> subscriber) {
+  public void unsubscribe(BiConsumer<Object, T> subscriber) {
     subLock.writeLock().lock();
     try {
       subscribers.remove(subscriber);
@@ -36,7 +36,7 @@ public class Event<A extends EventArg> {
     }
   }
 
-  public void invoke(Object owner, A args) {
+  public void invoke(Object owner, T args) {
     subLock.readLock().lock();
     try {
       subscribers.forEach(sub -> sub.accept(owner, args));

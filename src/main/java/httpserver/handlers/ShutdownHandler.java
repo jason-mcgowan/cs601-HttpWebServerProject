@@ -1,21 +1,19 @@
 package httpserver.handlers;
 
 import httpserver.util.Event;
-import httpserver.util.EventArg;
 import httpserver.util.Responses;
-import java.io.IOException;
 
 public class ShutdownHandler extends SingleInputHandler {
 
   private final String shutdownKey;
-  private final Event<EventArg> shutdownRequested = new Event<>();
+  private final Event<Object> shutdownRequested = new Event<>();
 
   public ShutdownHandler(String domain, String shutdownKey) {
     super(domain);
     this.shutdownKey = shutdownKey;
   }
 
-  public Event<EventArg> getShutdownRequested() {
+  public Event<Object> getShutdownRequested() {
     return shutdownRequested;
   }
 
@@ -32,7 +30,7 @@ public class ShutdownHandler extends SingleInputHandler {
     try {
       return Responses.getMessage("Server shutdown command issued");
     } finally {
-      shutdownRequested.invoke(this, EventArg.empty());
+      shutdownRequested.invoke(this, new Object());
     }
   }
 
