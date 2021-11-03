@@ -6,16 +6,19 @@ import httpserver.util.FileLogger;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * This class supports the project3 demonstration. It adds a file logger and remote shutdown
+ * capability to the underlying server.
+ *
+ * @author Jason McGowan
+ */
 public class SelfShutdownLogServer {
 
-  private Server server;
-  private FileLogger logger;
-  private ShutdownHandler shutdownHandler;
+  private final Server server;
+  private final FileLogger logger;
+  private final ShutdownHandler shutdownHandler;
 
-  private SelfShutdownLogServer() {
-  }
-
-  public SelfShutdownLogServer (Server server, Path loggerFile, String shutdownKey)
+  public SelfShutdownLogServer(Server server, Path loggerFile, String shutdownKey)
       throws IOException {
     this.server = server;
     this.logger = new FileLogger(loggerFile);
@@ -34,7 +37,7 @@ public class SelfShutdownLogServer {
   }
 
   private void shutdown(Object obj, Object arg) {
-    new Thread(()->{
+    new Thread(() -> {
       try {
         server.shutdown();
         logger.close();
@@ -45,6 +48,6 @@ public class SelfShutdownLogServer {
   }
 
   private void initializeLogging() {
-    server.getLogEvent().subscribe(logger.getSubscriber());
+    server.getLogEvent().subscribe(logger);
   }
 }

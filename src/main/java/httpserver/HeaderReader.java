@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+/**
+ * Utility class providing methods to read in an HTTP request header section.
+ *
+ * @author Jason McGowan
+ */
 public final class HeaderReader {
 
   private static final char CR = '\r';
@@ -20,6 +25,13 @@ public final class HeaderReader {
   private HeaderReader() {
   }
 
+  /**
+   * Reads the HTTP request header section from the provided stream.
+   *
+   * @param isr The InputStreamReader providing the HTTP request stream, starting with the first byte of the header section.
+   * @return A HashMap of the header keys to their values.
+   * @throws RequestException Depending on the HTTP protocol violation
+   */
   public static HashMap<String, String> readHeaderLines(InputStreamReader isr)
       throws IOException, RequestException {
     HeaderReader hb = new HeaderReader();

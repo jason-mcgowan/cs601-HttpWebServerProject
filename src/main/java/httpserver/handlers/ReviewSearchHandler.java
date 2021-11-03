@@ -5,6 +5,11 @@ import cs601.project1.SearchTableP1;
 import cs601.project1.SearchableP1;
 import java.util.stream.Stream;
 
+/**
+ * Returns all reviews containing at least one occurrence of the provided single word.
+ *
+ * @author Jason McGowan
+ */
 public class ReviewSearchHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
   public ReviewSearchHandler(SearchTableP1<T> table) {

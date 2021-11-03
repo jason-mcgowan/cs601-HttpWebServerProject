@@ -6,6 +6,12 @@ import httpserver.protocol.Version;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Utility class for reading in the request line for an HTTP 1.1 request message from the provided
+ * input stream.
+ *
+ * @author Jason McGowan
+ */
 public final class RequestLineReader {
 
   private static final int SPACE_ASCII_VAL = 32;
@@ -16,7 +22,14 @@ public final class RequestLineReader {
   private RequestLineReader() {
   }
 
-  public static RequestLine readRequestLine(InputStreamReader isr) throws IOException, RequestException {
+  /**
+   * @param isr InputStreamReader at the first byte of an incoming HTTP request message.
+   * @return A valid RequestLine object
+   * @throws RequestException Contains status code associated with violating framework rules or
+   *                          protocol
+   */
+  public static RequestLine readRequestLine(InputStreamReader isr)
+      throws IOException, RequestException {
     Method method = readMethod(isr);
     String uri = readURI(isr);
     Version version = readVersion(isr);
@@ -28,9 +41,9 @@ public final class RequestLineReader {
     StringBuilder sb = new StringBuilder();
     int read = isr.read();
 
-    while (read != SPACE_ASCII_VAL) {
+    while (read != SPACE_ASCII_VAL) { // Space indicates the end of the method name
       throwIfInvalidRead(read);
-      if (sb.length() >= Method.MAX_LENGTH) {
+      if (sb.length() >= Method.MAX_LENGTH) { // Prevent malicious long gibberish requests
         throw new RequestException(StatusCode.CLIENT_ERROR_400_BAD_REQUEST);
       }
       sb.append((char) read);

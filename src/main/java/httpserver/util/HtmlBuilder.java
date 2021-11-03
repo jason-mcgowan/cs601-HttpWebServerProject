@@ -1,5 +1,10 @@
 package httpserver.util;
 
+/**
+ * Utility class for providing common HTML documents.
+ *
+ * @author Jason McGowan
+ */
 public final class HtmlBuilder {
 
   private static final String START_TO_NAMESPACE = "<!DOCTYPE HTML>\n<html xmlns=\"";
@@ -10,6 +15,9 @@ public final class HtmlBuilder {
   private HtmlBuilder() {
   }
 
+  /**
+   * Ensure the bodyXml is fully formed XML.
+   */
   public static String simplePage(String namespace, String title, String bodyXml) {
     return START_TO_NAMESPACE + namespace
         + NAMESPACE_TO_TITLE + title

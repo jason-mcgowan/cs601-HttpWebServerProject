@@ -3,6 +3,12 @@ package httpserver;
 import httpserver.protocol.Method;
 import httpserver.protocol.Version;
 
+/**
+ * Represents the Start Line of an HTTP request, the Request Line. Contains the Method, URI, and
+ * Version.
+ *
+ * @author Jason McGowan
+ */
 public class RequestLine {
 
   private final Method method;

@@ -1,6 +1,11 @@
 package httpserver.protocol;
 
-// https://www.rfc-editor.org/rfc/rfc7231.html#section-6
+/**
+ * A portion of the HTTP response status codes used in this framework. {@see //
+ * https://www.rfc-editor.org/rfc/rfc7231.html}
+ *
+ * @author Jason McGowan
+ */
 public enum StatusCode {
   SUCCESS_200_OK("200", "OK"),
   CLIENT_ERROR_400_BAD_REQUEST("400", "Bad Request"),

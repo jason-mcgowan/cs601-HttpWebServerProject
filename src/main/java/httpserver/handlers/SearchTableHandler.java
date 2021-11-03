@@ -2,11 +2,15 @@ package httpserver.handlers;
 
 import cs601.project1.SearchTableP1;
 import cs601.project1.SearchableP1;
-import httpserver.util.Responses;
 import httpserver.util.HtmlBuilder;
-import java.io.IOException;
+import httpserver.util.Responses;
 import java.util.stream.Stream;
 
+/**
+ * An abstract class providing common functionality for SearchTableP1 queries.
+ *
+ * @author Jason McGowan
+ */
 public abstract class SearchTableHandler<T extends SearchableP1> extends SingleInputHandler {
 
   protected final SearchTableP1<T> table;

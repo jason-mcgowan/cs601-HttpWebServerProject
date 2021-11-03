@@ -8,11 +8,15 @@ import httpserver.Server;
 import httpserver.handlers.ChatHandler;
 import httpserver.handlers.FindHandler;
 import httpserver.handlers.ReviewSearchHandler;
-import httpserver.handlers.ShutdownHandler;
-import httpserver.util.FileLogger;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+/**
+ * The entry point for the project3 demonstration. This class does not have robust argument
+ * validation as it is merely a demo of the underlying framework.
+ *
+ * @author Jason McGowan
+ */
 public class Driver {
 
   private static final String REVIEW_FILE_FLAG = "-reviewfile";
@@ -45,7 +49,8 @@ public class Driver {
 
   }
 
-  private static void initializeChatBotServer(String slackbotPort, String slackbotWebhook, String shutdownKey,
+  private static void initializeChatBotServer(String slackbotPort, String slackbotWebhook,
+      String shutdownKey,
       String domain) throws IOException {
     Server chatServer = new Server(domain);
 
@@ -57,7 +62,8 @@ public class Driver {
     chatSSLS.runUntilRemoveShutdown(Integer.parseInt(slackbotPort));
   }
 
-  private static void initializeReviewServer(String reviewFile, String reviewPort, String shutdownKey,
+  private static void initializeReviewServer(String reviewFile, String reviewPort,
+      String shutdownKey,
       String domain) throws IOException {
     Server reviewServer = new Server(domain);
 
@@ -70,7 +76,8 @@ public class Driver {
     FindHandler<Review> tafHandler = new FindHandler<>(reviews);
     reviewServer.addMapping("/find", tafHandler);
 
-    SelfShutdownLogServer reviewSelfSdLog = new SelfShutdownLogServer(reviewServer, Paths.get("reviewlog.txt"),
+    SelfShutdownLogServer reviewSelfSdLog = new SelfShutdownLogServer(reviewServer,
+        Paths.get("reviewlog.txt"),
         shutdownKey);
     reviewSelfSdLog.runUntilRemoveShutdown(Integer.parseInt(reviewPort));
   }

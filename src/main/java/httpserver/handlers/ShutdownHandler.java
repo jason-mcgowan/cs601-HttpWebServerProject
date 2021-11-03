@@ -3,6 +3,11 @@ package httpserver.handlers;
 import httpserver.util.Event;
 import httpserver.util.Responses;
 
+/**
+ * Provides a remote way to shut down the server using a key provided on initializing.
+ *
+ * @author Jason McGowan
+ */
 public class ShutdownHandler extends SingleInputHandler {
 
   private final String shutdownKey;

@@ -2,8 +2,13 @@ package httpserver;
 
 import httpserver.protocol.StatusCode;
 
+/**
+ * Contains the status code associated with the HTTP violation.
+ *
+ * @author Jason McGowan
+ */
 public class RequestException extends Exception {
-  private StatusCode statusCode;
+  private final StatusCode statusCode;
 
   public RequestException(StatusCode statusCode) {
     this.statusCode = statusCode;

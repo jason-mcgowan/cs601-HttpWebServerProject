@@ -2,10 +2,10 @@ package httpserver.handlers;
 
 import com.google.gson.JsonObject;
 import httpserver.RequestException;
-import httpserver.util.Responses;
 import httpserver.protocol.StatusCode;
 import httpserver.protocol.Version;
 import httpserver.util.HtmlBuilder;
+import httpserver.util.Responses;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -16,12 +16,23 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Sends a message to the provided webhook URL in accordance with Slack API rules {@see
+ * https://api.slack.com/web}.
+ *
+ * @author Jason McGowan
+ */
 public class ChatHandler extends SingleInputHandler {
 
   private final URI webhookUrl;
   private final String TITLE = "Slack Messenger";
   private final String goodResponse;
 
+  /**
+   * Sets up the webhook URL provided through the Slack API bot.
+   *
+   * @param webhookUrl Provided from Slack Bot.
+   */
   public ChatHandler(String webhookUrl) {
     this.webhookUrl = URI.create(webhookUrl);
     goodResponse = HtmlBuilder.simplePage(domain, TITLE, "Post successful");

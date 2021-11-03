@@ -1,16 +1,22 @@
 package httpserver.handlers;
 
 import httpserver.Handler;
-import httpserver.protocol.Method;
 import httpserver.Request;
 import httpserver.RequestException;
-import httpserver.util.Responses;
+import httpserver.protocol.Method;
 import httpserver.protocol.StatusCode;
 import httpserver.util.HtmlBuilder;
+import httpserver.util.Responses;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * An abstract class to provide common functionality for simple web queries that handle a single
+ * input.
+ *
+ * @author Jason McGowan
+ */
 public abstract class SingleInputHandler implements Handler {
 
   protected final String postKey;

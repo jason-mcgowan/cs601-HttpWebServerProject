@@ -2,6 +2,11 @@ package httpserver;
 
 import java.util.HashMap;
 
+/**
+ * Instances of Request represent a valid HTTP 1.1 request message.
+ *
+ * @author Jason McGowan
+ */
 public class Request {
 
   private final RequestLine requestLine;
@@ -13,8 +18,6 @@ public class Request {
     this.requestLine = requestLine;
     this.headers = headers;
     this.body = body;
-
-
   }
 
   @Override

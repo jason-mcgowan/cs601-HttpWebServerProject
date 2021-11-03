@@ -1,5 +1,10 @@
 package httpserver.protocol;
 
+/**
+ * The HTTP versions supported for request messages in this framework.
+ *
+ * @author Jason McGowan
+ */
 public enum Version {
   HTTP_1_1(1, 1);
 

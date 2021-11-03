@@ -15,6 +15,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * A simple HTTP server that accepts HTTP/1.1 request messages and sends them to an attached handler
+ * based on the request URI.
+ *
+ * @author Jason McGowan
+ */
 public class Server {
 
   private final HashMap<String, Handler> handlers = new HashMap<>();
@@ -22,7 +28,8 @@ public class Server {
   private final ExecutorService connectionListenerThread = Executors.newSingleThreadExecutor();
   private final ExecutorService clientThreads = Executors.newCachedThreadPool();
   private final Event<String> logEvent = new Event<>();
-  private String domain;
+
+  private final String domain;
 
   private ServerSocket serverSocket;
 

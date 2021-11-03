@@ -1,6 +1,10 @@
 package httpserver.protocol;
 
-// https://www.rfc-editor.org/rfc/rfc7231.html#section-4
+/**
+ * HTTP request method names. {@see // https://www.rfc-editor.org/rfc/rfc7231.html}
+ *
+ * @author Jason McGowan
+ */
 public enum Method {
   GET("GET"),
   HEAD("HEAD"),
