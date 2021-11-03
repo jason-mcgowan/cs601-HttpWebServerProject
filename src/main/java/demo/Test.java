@@ -1,4 +1,4 @@
-package Project3Demo;
+package demo;
 
 import cs601.project1.FileJsonParser;
 import cs601.project1.Review;
@@ -7,14 +7,10 @@ import httpserver.Server;
 import httpserver.handlers.ChatHandler;
 import httpserver.handlers.FindHandler;
 import httpserver.handlers.ReviewSearchHandler;
+import httpserver.handlers.ShutdownHandler;
 import httpserver.util.FileLogger;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Scanner;
 
 public class Test {
 
@@ -49,23 +45,21 @@ public class Test {
     ChatHandler ch = new ChatHandler(domain,
         "https://hooks.slack.com/services/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");
     server.addMapping("/slackbot", ch);
+
+    ShutdownHandler shutdownHandler = new ShutdownHandler(domain, "test123");
+    server.addMapping("/shutdown", shutdownHandler);
+    shutdownHandler.getShutdownRequested().subscribe((o, a) -> System.out.println("Shutdown requested"));
+
     server.start(8080);
 
-    try (Scanner scanner = new Scanner(System.in)) {
-      boolean running = true;
-      String input;
-      while (running) {
-        System.out.print("\n" + "Type shutdown> ");
-        input = scanner.nextLine();
-        if (input.equalsIgnoreCase("shutdown")) {
-          System.out.println("Shutting down...");
-          server.shutdown();
-          logger.close();
-          System.out.println("Server shutdown");
-          running = false;
-        }
+    server.getShutdownEvent().subscribe((o, a) -> {
+      try {
+        logger.close();
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-    }
+    });
+  }
 
 //    URI uri = new URI("http://localhost:8080/");
 ////    URI uri = new URI("http://www.google.com/");
@@ -84,13 +78,11 @@ public class Test {
 //    System.out.println(getResponseDetails(response));
 
 //    getGoogleResponse();
-  }
 
-
-  private static String getResponseDetails(HttpResponse<String> response) {
-    return "version=" + response.version()
-        + System.lineSeparator() + "statusCode=" + response.statusCode()
-        + System.lineSeparator() + "headers=" + response.headers()
-        + System.lineSeparator() + "body=" + response.body();
-  }
+//  private static String getResponseDetails(HttpResponse<String> response) {
+//    return "version=" + response.version()
+//        + System.lineSeparator() + "statusCode=" + response.statusCode()
+//        + System.lineSeparator() + "headers=" + response.headers()
+//        + System.lineSeparator() + "body=" + response.body();
+//  }
 }

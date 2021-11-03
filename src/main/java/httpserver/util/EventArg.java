@@ -4,7 +4,10 @@ public class EventArg {
 
   private static final EventArg empty = new EventArg();
 
-  public EventArg empty() {
+  public EventArg() {
+  }
+
+  public static EventArg empty() {
     return empty;
   }
 }

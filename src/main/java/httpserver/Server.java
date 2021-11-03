@@ -2,6 +2,7 @@ package httpserver;
 
 import httpserver.protocol.StatusCode;
 import httpserver.util.Event;
+import httpserver.util.EventArg;
 import httpserver.util.Responses;
 import httpserver.util.StringEventArg;
 import java.io.IOException;
@@ -17,11 +18,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
 
+  public static final String POISON_URI = "/47c9d407-fa1b-496d-9437-a2ca67b6b3e6";
+
   private final HashMap<String, Handler> handlers = new HashMap<>();
   private final ReentrantReadWriteLock handlerLock = new ReentrantReadWriteLock();
   private final ExecutorService connectionListenerThread = Executors.newSingleThreadExecutor();
   private final ExecutorService clientThreads = Executors.newCachedThreadPool();
   private final Event<StringEventArg> logEvent = new Event<>();
+  private final Event<EventArg> shutdownEvent = new Event<>();
+
+
   private ServerSocket server;
 
   public Server() {
@@ -45,12 +51,15 @@ public class Server {
   }
 
   public synchronized void shutdown() throws IOException {
+    logEvent.invoke(this, new StringEventArg("Server shutdown requested"));
+    shutdownEvent.invoke(this, EventArg.empty());
     handlerLock.writeLock().lock();
     try {
       server.close();
       clientThreads.shutdown();
       connectionListenerThread.shutdown();
       logEvent.close();
+      shutdownEvent.close();
     } finally {
       handlerLock.writeLock().unlock();
     }
@@ -59,6 +68,11 @@ public class Server {
   public Event<StringEventArg> getLogEvent() {
     return logEvent;
   }
+
+  public Event<EventArg> getShutdownEvent() {
+    return shutdownEvent;
+  }
+
 
   private void listenForClients() {
     try {
@@ -80,6 +94,10 @@ public class Server {
     try {
       isr = new InputStreamReader(client.getInputStream(), StandardCharsets.US_ASCII);
       Request request = RequestReader.readRequest(isr);
+      if (request.getRequestLine().getRequestURI().equals(POISON_URI)) {
+        shutdown();
+        return;
+      }
       response = getResponse(request);
       respondToClient(response, client);
     } catch (IOException e) {
