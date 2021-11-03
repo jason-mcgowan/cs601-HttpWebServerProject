@@ -5,8 +5,11 @@ import httpserver.protocol.StatusCode;
 import httpserver.protocol.Version;
 import java.time.Instant;
 
-public class Responses {
+public final class Responses {
 
+  private Responses() {
+
+  }
 
   public static String getTestPage() {
     String body = "<html>" +

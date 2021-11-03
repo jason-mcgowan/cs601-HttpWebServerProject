@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-public class HeaderReader {
+public final class HeaderReader {
 
   private static final char CR = '\r';
   private static final char LF = '\n';
