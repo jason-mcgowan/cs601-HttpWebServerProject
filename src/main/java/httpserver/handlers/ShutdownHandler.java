@@ -8,8 +8,7 @@ public class ShutdownHandler extends SingleInputHandler {
   private final String shutdownKey;
   private final Event<Object> shutdownRequested = new Event<>();
 
-  public ShutdownHandler(String domain, String shutdownKey) {
-    super(domain);
+  public ShutdownHandler(String shutdownKey) {
     this.shutdownKey = shutdownKey;
   }
 

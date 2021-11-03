@@ -7,18 +7,13 @@ import java.util.stream.Stream;
 
 public class FindHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
-  public FindHandler(String domain, SearchTableP1<T> table) {
-    super(domain, table);
+  public FindHandler(SearchTableP1<T> table) {
+    super(table);
   }
 
   @Override
   protected String initPostKey() {
     return "find";
-  }
-
-  @Override
-  protected String getPostTermResponse(String term) throws IOException {
-    return null;
   }
 
   @Override

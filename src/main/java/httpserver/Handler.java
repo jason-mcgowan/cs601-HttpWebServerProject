@@ -5,5 +5,6 @@ import java.io.IOException;
 public interface Handler {
 
   String respond(Request request) throws RequestException, IOException;
-  void setMapping(String url);
+  void setDomain(String domain);
+  void setUrl(String url);
 }

@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
@@ -21,10 +22,12 @@ public class Server {
   private final ExecutorService connectionListenerThread = Executors.newSingleThreadExecutor();
   private final ExecutorService clientThreads = Executors.newCachedThreadPool();
   private final Event<String> logEvent = new Event<>();
+  private String domain;
 
-  private ServerSocket server;
+  private ServerSocket serverSocket;
 
-  public Server() {
+  public Server(String domain) {
+    this.domain = domain;
   }
 
   public void addMapping(String url, Handler handler) {
@@ -35,24 +38,30 @@ public class Server {
     } finally {
       handlerLock.writeLock().unlock();
     }
-    handler.setMapping(url);
+    handler.setDomain(domain);
+    handler.setUrl(url);
   }
 
   public synchronized void start(int port) throws IOException {
-    server = new ServerSocket(port);
+    serverSocket = new ServerSocket(port);
     logEvent.invoke(this, "Server started on port: " + port);
     connectionListenerThread.execute(this::listenForClients);
   }
 
   public synchronized void shutdown() throws IOException {
     logEvent.invoke(this, "Server shutdown requested");
-    handlerLock.writeLock().lock();
     try {
-      server.close();
-      clientThreads.shutdown();
+      serverSocket.close();
       connectionListenerThread.shutdown();
-    } finally {
-      handlerLock.writeLock().unlock();
+      if (!connectionListenerThread.awaitTermination(5, TimeUnit.SECONDS)) {
+        connectionListenerThread.shutdownNow();
+      }
+      clientThreads.shutdown();
+      if (!clientThreads.awaitTermination(5, TimeUnit.SECONDS)) {
+        clientThreads.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
 
@@ -60,15 +69,19 @@ public class Server {
     return logEvent;
   }
 
+  public String getDomain() {
+    return domain;
+  }
+
   private void listenForClients() {
     try {
-      while (!server.isClosed() && server.isBound()) {
-        Socket newConnection = server.accept();
+      while (!serverSocket.isClosed() && serverSocket.isBound()) {
+        Socket newConnection = serverSocket.accept();
         logEvent.invoke(this, "Client connected: " + newConnection);
         clientThreads.execute(() -> handleConnection(newConnection));
       }
     } catch (IOException e) {
-      if (!server.isClosed()) {
+      if (!serverSocket.isClosed()) {
         logIOException(e);
       }
     }

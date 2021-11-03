@@ -7,8 +7,8 @@ import java.util.stream.Stream;
 
 public class ReviewSearchHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
-  public ReviewSearchHandler(String domain, SearchTableP1<T> table) {
-    super(domain, table);
+  public ReviewSearchHandler(SearchTableP1<T> table) {
+    super(table);
   }
 
   @Override

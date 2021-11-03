@@ -40,15 +40,16 @@ public class FileLogger implements EventListener<String>, AutoCloseable, Closeab
 
   @Override
   public synchronized void close() throws IOException {
-    bw.flush();
-    bw.close();
-    thread.shutdown();
     try {
+      thread.shutdown();
       if (!thread.awaitTermination(5, TimeUnit.SECONDS)) {
         thread.shutdownNow();
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
+    } finally {
+      bw.flush();
+      bw.close();
     }
   }
 }

@@ -11,13 +11,12 @@ public abstract class SearchTableHandler<T extends SearchableP1> extends SingleI
 
   protected final SearchTableP1<T> table;
 
-  public SearchTableHandler(String domain, SearchTableP1<T> table) {
-    super(domain);
+  public SearchTableHandler(SearchTableP1<T> table) {
     this.table = table;
   }
 
   @Override
-  protected String getPostTermResponse(String term) throws IOException {
+  protected final String getPostTermResponse(String term) {
     String body = buildBodyFromSearchResults(term);
     String page = HtmlBuilder.simplePage(domain, "Search Results", body);
     return Responses.getMessage(page);

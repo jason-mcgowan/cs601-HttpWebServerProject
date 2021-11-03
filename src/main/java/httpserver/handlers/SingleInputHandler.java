@@ -14,16 +14,20 @@ import java.nio.charset.StandardCharsets;
 public abstract class SingleInputHandler implements Handler {
 
   protected final String postKey;
-  protected final String domain;
+  protected String domain;
   protected String getResponse;
 
-  public SingleInputHandler(String domain) {
+  public SingleInputHandler() {
     this.postKey = initPostKey();
+  }
+
+  @Override
+  public final void setDomain(String domain) {
     this.domain = domain;
   }
 
   @Override
-  public final void setMapping(String url) {
+  public void setUrl(String url) {
     getResponse = buildGetResponse(url);
   }
 

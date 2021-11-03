@@ -22,8 +22,7 @@ public class ChatHandler extends SingleInputHandler {
   private final String TITLE = "Slack Messenger";
   private final String goodResponse;
 
-  public ChatHandler(String domain, String webhookUrl) {
-    super(domain);
+  public ChatHandler(String webhookUrl) {
     this.webhookUrl = URI.create(webhookUrl);
     goodResponse = HtmlBuilder.simplePage(domain, TITLE, "Post successful");
   }
