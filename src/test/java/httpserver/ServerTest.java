@@ -17,15 +17,13 @@ public class ServerTest {
   private static final String domain = "localhost";
   private static int port;
 
-  private static Server server;
-
   @Before
-  public void setup() {
+  public synchronized void setup() {
     try {
       ServerSocket socket = new ServerSocket(0);
       port = socket.getLocalPort();
       socket.close();
-      server = new Server(domain);
+      Server server = new Server(domain);
       server.start(port);
     } catch (IOException e) {
       Assert.fail();
