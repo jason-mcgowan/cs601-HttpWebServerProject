@@ -16,22 +16,28 @@ import system.RequestBuilder;
 
 public class ChatHandlerTest {
 
-  private static final int API_PORT = 8080;
-  private static final String WEBHOOK = "http://localhost:" + API_PORT + "/";
   private static final String MAP_URL = "/url";
   private static final String MAP_DOMAIN = "domain";
   private static ChatHandler handler;
+  private static ServerSocket serverSocket;
 
   @Before
   public void setUp() {
-    handler = new ChatHandler(WEBHOOK);
+    try {
+      serverSocket = new ServerSocket(0);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    int apiPort = serverSocket.getLocalPort();
+    String webhook = "http://localhost:" + apiPort + "/";
+    handler = new ChatHandler(webhook);
     handler.setUrl(MAP_URL);
     handler.setDomain(MAP_DOMAIN);
   }
 
   @Test
   public void NON_OKAY_RESPONSE_RETURNS_500() {
-    new Thread(() -> mockApiBadResponse(API_PORT)).start();
+    new Thread(this::mockApiBadResponse).start();
     try {
       Request request = RequestBuilder.genRequestWithMethod("POST", "msg=blank");
       String response = handler.respond(request);
@@ -43,9 +49,8 @@ public class ChatHandlerTest {
     }
   }
 
-  private void mockApiBadResponse(int port) {
+  private void mockApiBadResponse() {
     try {
-      ServerSocket serverSocket = new ServerSocket(port);
       Socket socket = serverSocket.accept();
       String response = Responses.getStandardErrorResponse(
           new RequestException(StatusCode.CLIENT_ERROR_400_BAD_REQUEST));
