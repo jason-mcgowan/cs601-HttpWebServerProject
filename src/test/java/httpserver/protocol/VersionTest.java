@@ -1,4 +1,4 @@
-package httpserver;
+package httpserver.protocol;
 
 import httpserver.protocol.Version;
 import org.junit.Assert;

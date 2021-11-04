@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,6 +17,19 @@ public class RequestReaderTest {
     try {
       Request request = RequestReader.readRequest(genReader(genRequestWithBody(body)));
       Assert.assertEquals(body, request.getBody());
+    } catch (IOException | RequestException e) {
+      Assert.fail();
+    }
+  }
+
+  @Test
+  public void REQUEST_WITHOUT_HEADER_READS_CORRECTLY() {
+    try {
+      Request request = RequestReader.readRequest(genReader(genRequestNoHeader()));
+      HashMap<String, String> expected = new HashMap<>();
+      HashMap<String, String> actual = request.getHeaders();
+      Assert.assertEquals(expected, actual);
+      Assert.assertNull(request.getBody());
     } catch (IOException | RequestException e) {
       Assert.fail();
     }
@@ -46,6 +60,11 @@ public class RequestReaderTest {
   private String genRequestNoBody() {
     return "GET /urlgoeshere?something#there HTTP/1.1\r\n"
         + "Host: localhost:8080\r\n"
+        + "\r\n";
+  }
+
+  private String genRequestNoHeader() {
+    return "GET /urlgoeshere?something#there HTTP/1.1\r\n"
         + "\r\n";
   }
 
