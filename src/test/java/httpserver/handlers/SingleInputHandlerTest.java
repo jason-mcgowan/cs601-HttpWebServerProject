@@ -1,5 +1,11 @@
 package httpserver.handlers;
 
+/*
+The derived class SearchTableHandler and its two derived classes used for project3 do not any new
+functionality that needs testing. They rely on the SearchTable already proven reliable as part of
+project1.
+ */
+
 import httpserver.Request;
 import httpserver.RequestException;
 import httpserver.protocol.StatusCode;
