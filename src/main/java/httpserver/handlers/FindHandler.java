@@ -17,7 +17,7 @@ public class FindHandler<T extends SearchableP1> extends SearchTableHandler<T> {
 
   @Override
   protected String initPostKey() {
-    return "find";
+    return "asin";
   }
 
   @Override
