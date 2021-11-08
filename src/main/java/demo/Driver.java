@@ -67,7 +67,7 @@ public class Driver {
       String domain) throws IOException {
     Server reviewServer = new Server(domain);
 
-    SearchTableP1<Review> reviews = new SearchTableP1<>();
+    SearchTableP1<Review> reviews = new SearchTableP1<>(true);
     FileJsonParser.parseByStream(Paths.get(reviewFile), Review.class, reviews::add);
 
     ReviewSearchHandler<Review> rsh = new ReviewSearchHandler<>(reviews);
