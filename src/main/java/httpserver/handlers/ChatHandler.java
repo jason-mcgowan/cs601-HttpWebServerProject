@@ -40,7 +40,7 @@ public class ChatHandler extends SingleInputHandler {
 
   @Override
   protected String initPostKey() {
-    return "msg";
+    return "message";
   }
 
   @Override
