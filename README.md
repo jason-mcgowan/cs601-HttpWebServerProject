@@ -2,7 +2,7 @@ HTTP Web Server at Socket Level in Java
 =======================
 
 ### Background
-This project was done as part of the Fall 2021 CS603 Principles of Software Development course at the University of San Francisco.
+This project was done as part of the Fall 2021 CS601 Principles of Software Development course at the University of San Francisco.
 
 ### Goals
 Implement the following:
